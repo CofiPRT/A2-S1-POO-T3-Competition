@@ -1,0 +1,209 @@
+---------------------------------------
+--- Programare Orientata pe Obiecte ---
+----- Tema 3. Competitii Sportive -----
+---------------------------------------
+
+Cuprinsul:
+	1. Pachetul 'comps'.................................Linia  28
+		1.1. Clasa 'Competition'........................Linia  29
+		1.2. Clasa 'MainClass'..........................Linia  70
+	2. Pachetul 'enums'.................................Linia 118
+		2.1. Enum-ul 'Gender'...........................Linia 119
+		2.2. Enum-ul 'TeamType'.........................Linia 129
+	3. Pachetul 'factories'.............................Linia 135
+	4. Pachetul 'misc'..................................Linia 142
+		4.1. Clasa 'SortedList'.........................Linia 143
+	5. Pachetul 'teams'.................................Linia 142
+		5.1. Clasa 'Player'.............................Linia 143
+		5.2. Clasa 'Team'...............................Linia 150
+	6. Pachetul 'visitorstrategy'.......................Linia 175
+		6.1. Clasa 'TeamVisitor'........................Linia 176
+		6.2. Clasa 'ScoreCalculator'....................Linia 187
+		6.3. Pachetul 'visitorstrategy.formulas'........Linia 197
+	7. Alte precizari...................................Linia 210
+	
+=== comps ===
+------ Competition
+		- O competitie ce urmeaza a fi formata si jucata.
+		- Prezinta metodele:
+			addTeam:
+				Adauga o noua echipa in aceasta competitie, conditionata de
+				sexul jucatorilor echipei si sportul practicat (detalii ce
+				trebuie sa coincida cu cele ale competitiei).
+				In cazul in care o conditie nu este indeplinita, echipa
+				nu este adaugata in competitie.
+				
+			playCompetition:
+				Incepe competitia propriu-zisa prin jucarea de meciuri intre
+				fiecare 2 echipe. Dupa fiecare meci, se calculeaza punctajele
+				echipelor ce au jucat si se restabileste clasamentul tuturor
+				echipelor, ele fiind notificate cu privire la aceasta schimbare.
+				
+			printRanking:
+				Afiseaza primele 'maxPrints' echipe din clasament (default: 3)
+				dupa care afiseaza pentru fiecare echipa din competitie, in
+				ordinea in care au intrat in competitie, locul pe care s-a
+				plasat.
+				
+			generateRanking:
+				Aceasta metoda face o copie a listei 'teams' in lista sortata
+				'ranking' pentru a sorta echipele dupa punctele obtinute
+				
+			playRound:
+				Cu ajutorul unui Visitor, se calculeaza scorurile celor doua
+				echipe primite ca parametru si se stabileste castigatorul.
+				Echipa castigatoare primeste 3 puncte, iar in caz de egalitate,
+				ambele echipe primesc cate 1 punct.
+				Clasamentul este din nou sortat tinand cont de aceasta
+				actualizare, dupa care fiecare echipa este notificata cu
+				privire la noul loc pe care il ocupa in clasament.
+				
+			notifyObservers:
+				Metoda pentru pattern-ul Observer ce notifica toate echipele
+				cu privire la noul loc pe care il ocupa in clasament.
+				
+			getters and setters
+			
+------ MainClass
+		- Clasa ce contine metoda 'main'
+		- Serveste mai multe functionalitati
+		IO:
+			Un Scanner pentru citirea din fisier 'inputStream'
+			
+			Redirectionarea output-ului se face in fisierul de output prin
+			System.setOut asupra stream-ului aferent fisierului.
+			Se face un backup al consolei (out-ul initial) in cazul in care se
+			doreste reutilizarea ei la sfarsitul programului.
+			
+		Obiecte principale:
+			Programul va lucra cu o lista de echipe 'teams' si o singura
+			competitie 'competition'
+			
+		Metoda setupIO:
+			Face modificarile necesare pentru input si output pentru a se putea
+			lucra cu aceste stream-uri
+			
+		Metoda restoreIO:
+			Restaureaza modificarile facute de 'setupIO'
+			
+		Metoda registerTeams:
+			> Se citesc din fisier detaliile unei echipe si se creeaza un
+			astfel de obiect
+			> Pentru fiecare echipa, se citesc jucatorii care trebuie sa faca
+			parte din ea si se creeaza astfel de obiecte
+			
+		Metoda listTeams:
+			> Aplica 'toString' pe fiecare echipa din 'teams'
+			
+		Metoda registerCompetition:
+			> Se citesc din fisier detaliile unei competitii si se creeaza
+			un astfel de obiect
+			> Se citesc detaliile fiecarei echipe ce trebuie adaugata in
+			competitie dupa care se incearca aceasta actiune. In caz de succes,
+			se muta echipa din lista 'teams' aferenta clasei 'MainClass' in
+			lista de echipe aferenta obiectului de tip 'Competition'
+			
+		Metoda playCompetition:
+			> Se "joaca" competitia dupa care se afiseaza rezultatele ei
+			(clasamentul)
+			
+		Metoda main:
+			> Se verifica primul argument din linia de comanda pentru a decide
+			ce cerinta va fi executata, dupa care se apeleaza metodele necesare
+			realizarii acesteia.
+			
+=== enums ===
+------ Gender
+		Enum pentru sexul jucatorilor din competitie
+		
+		Fiecare tip enum are un camp 'translation' ce serveste la traducerea
+		acestuia intr-un si dintr-un String
+		
+		Este prezenta o metoda 'translate' ce compara un string primit ca
+		parametru cu traducerile fiecarui tip de enum. In cazul in care se
+		gaseste o potrivire, se returneaza tipul aferent.
+		
+------ TeamType
+		Enum pentru tipurile de echipe din competitie
+		
+		Prezinta aceleasi detalii ce servesc la traducerile tip - string precum
+		cele antepuse.
+		
+=== factories ===
+	Clasele din acest pachet functioneaza dupa pattern-ul Factory
+	Sunt prezente fabrici pentru fiecare dintre urmatoarele:
+		Competition - CompetitionBuilder
+		Player - PlayerBuilder
+		Team - TeamBuilder
+		
+=== teams ===
+------ Player
+		Un obiect al acestei clase defineste un jucator, descris de un nume si
+		un scor.
+		
+		Doi jucatori pot fi comparati prin scorul lor, jucatorul "mai mare"
+		fiind cel cu scorul mai mare.
+		
+------ Team
+		Un obiect al acestei superclase defineste o echipa, descrisa de un
+		nume, sexul jucatorilor, numarul jucatorilor, si o lista propriu-zisa
+		cu jucatori. Totodata, pentru a usura implementarea, sunt prezente
+		campuri pentru numarul de puncte acumulate in urma meciurilor si
+		pozitia echipei in clasament.
+		
+		Metoda 'accept':
+			Metoda din pattern-ul Visitor ce ofera posibilitatea folosirii
+			unui visitator asupra unui obiect de acest fel.
+			
+		Metoda 'update':
+			Metoda din pattern-ul Observer apelata de subiectul de tip
+			Competition pentru a actualiza pozitia in clasament a acestei
+			echipe.
+			
+		Doua echipe pot fi comparate dupa punctele obtinute in urma meciurilor.
+		Echipa "mai mare" este cea cu numarul de puncte mai mic, astfel
+		o lista de echipe va avea pe prima pozitie echipa cu cel mai mare
+		punctaj.
+		
+------ BasketballTeam, FootballTeam si HandballTeam
+		Clase ce extind 'Team' si au unica diferenta ca metoda 'accept'
+		primeste un tip diferit de obiect.
+		
+=== visitorstrategy ===
+------ TeamVisitor
+		Folosit drept vizitator pentru clasa Visitor
+		
+		Prezinta (prin definitie) un overload al metodei 'visit' pentru fiecare
+		tip de obiect primit ca parametru.
+		
+		Fiind o simbioza cu pattern-ul Strategy, pentru fiecare overload al
+		metodei 'visit' se seteaza, conform cerintei, o formula de calcul al
+		scorului aferenta dupa care se executa, obtinand astfel scorul unei
+		echipe in functie de tipul ei si sexul jucatorilor ei.
+		
+------ ScoreCalculator
+		Folosita drept clasa de "Context" pentru pattern-ul Strategy
+		
+		Prezinta un camp de tip 'ScoreFormula' ce va face referinta la un
+		obiect corespunzator de acest tip pentru a aplica o formula dorita
+		asupra scorurilor jucatorilor.
+		
+		Astfel, este prezenta metoda 'applyFormula' care primeste o lista de
+		jucatori si aplica formula salvata de acest obiect asupra lor.
+		
+====== visitorstrategy.formulas ======
+------ ScoreFormula
+		Interfata implementata de clasele enuntate mai jos.
+		
+		Ea prezinta metoda 'applyOn' pe care toate clasele de mai jos
+		trebuie sa o implementeze in modul lor. Are functionalitatea metodei
+		'applyFormula' mentionata in 'ScoreCalculator'.
+		
+------ BasketballFormula, FootballFemaleFormula, FootballMaleFormula,
+------ HandballFemaleFormula, HandballMaleFormula
+		Aceste clase implementeaza metoda 'applyOn' dupa propria formula,
+		mentionata in enuntul temei.
+		
+=== Alte precizari ===
+		Campul 'rank' din 'Team' exista pentru unicul scop de a uzita metoda
+		'update' din pattern-ul 'Observer' :)
